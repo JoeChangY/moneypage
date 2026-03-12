@@ -32,11 +32,11 @@ async function executeMoneypageAgent(item) {
       const options = new Chrome.Options();
   
       // options.addArguments('--user-data-dir=/Users/joe/Library/Application Support/Google/Chrome/Profile\ 5'); // mac test
-      options.setChromeBinaryPath("/opt/google/chrome/chrome");
+      // options.setChromeBinaryPath("/opt/google/chrome/chrome");
       // options.addArguments('--user-data-dir=/Users/joe/Library/Application Support/Google/Chrome/Default'); // 使用者資料目錄
-      // options.setChromeBinaryPath("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"); //mac test
+      options.setChromeBinaryPath("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"); //mac test
   
-      options.addArguments('--headless');  // 無頭模式
+      // options.addArguments('--headless');  // 無頭模式
       options.addArguments('--no-sandbox');  // 防止沙盒模式問題
       options.addArguments('--disable-dev-shm-usage');  // 解決一些 Linux 系統中的共享內存問題
       options.addArguments('--remote-debugging-port=9222');  // 啟動 DevTools 端口，對調試很有用
@@ -53,18 +53,12 @@ async function executeMoneypageAgent(item) {
       {
         action.initialize(driver);
         await driver.manage().setTimeouts({ implicit: sleepTime });
-        await action.jump('https://console.cloud.google.com/bigquery/agents_hub?project=aemon-projects-dev-002', '', '1800-1');
-        await loginGoogleAccoiunt(driver, userName, userPassword);
-  
-        const iframe = await driver.wait(
-          until.elementLocated(By.xpath('//iam-permissions-banner//iframe')),
-          sleepTime
-        );
-        await driver.switchTo().frame(iframe);
+        await action.jump('https://money.mmorpg.plus/Identity/Account/Login?ReturnUrl=%2F', '', '1800-1');
+        await loginAccount(driver, userName, userPassword);
   
         await driver.sleep(3000);
-        const agentMatCardDataBase = await driver.findElement(By.xpath(`//mat-card[.//span[text()=" ${dbId} "]]`));
-        await agentMatCardDataBase.click();
+        const agentOpenNewOrder = await driver.findElement(By.xpath(`//a[.//span[text()="開單分鑽"]]`));
+        await agentOpenNewOrder.click();
 
         //input prompt
         await action.waitAndInput(fullPrompt, action.selectType.XPATH, '//ca-message-writer//textarea', sleepTime, '1802');
@@ -268,40 +262,7 @@ async function executeMoneypageAgent(item) {
         currentScroll = await driver.executeScript("return arguments[0].scrollTop;", element);
         scrollHeight = await driver.executeScript("return arguments[0].scrollHeight;", element);
         await driver.sleep(5000);
-  
-        let snapShotAgentEnd = await common.screenshotTimestampRecord(driver, item.questionId);
-        snapshots.push(snapShotAgentEnd);
-        //agent is end
-        //here is debug info action
-        // await action.waitAndClick(selectType.XPATH, '//div[@class = "debug-info-header-text"]', sleepTime, "debug info header click", '1808');
-  
-        // await driver.sleep(3000);
-  
-  
-        // let snapShotItem = await common.screenshotTimestampRecord(driver, item.questionId);
-        // snapshots.push(snapShotItem);
-  
-        // await action.waitAndClick(
-        //   action.selectType.XPATH,
-        //   '//div[contains(@class,"mdc-tab")]//span[text()="Response"]',
-        //   sleepTime,
-        //   'click Response button.',
-        //   '1808-1'
-        // );
-  
-        // await driver.sleep(10000);
-  
-        // const rawRequestAndRawResponseInfo = await driver.findElements(By.xpath('//div[contains(@class,"mat-mdc-tab-body-content")]//ca-code-view'));
-        // const lastInfo = rawRequestAndRawResponseInfo.length - 1;
-        // const lastTwoInfo = rawRequestAndRawResponseInfo.length - 2;
-  
-        // rawRequest = await rawRequestAndRawResponseInfo[lastTwoInfo].getAttribute('textContent');
-        // jsonRawResponse = await rawRequestAndRawResponseInfo[lastInfo].getAttribute('textContent');
-        // common.logToFile(`here is rawRequest: ${rawRequest}`);
-        // common.logToFile(`here is rawResponse: ${jsonRawResponse}`);
-        // snapShotItem = await common.screenshotTimestampRecord(driver, item.questionId);
-        // snapshots.push(snapShotItem);
-        //end of debug info
+
   
       } catch (error)
       {
@@ -311,8 +272,6 @@ async function executeMoneypageAgent(item) {
       common.logToFile(JSON.stringify(response));
       common.log(`Error during interaction: ${error}`);
       common.logToFile(`error status,`+JSON.stringify(response));
-      let snapShotItem = await common.screenshotTimestampRecord(driver, item.questionId);
-      snapshots.push(snapShotItem);
       } finally
       {
         await action.destory();
@@ -348,26 +307,29 @@ async function executeMoneypageAgent(item) {
   }
   
   //login function
-  async function loginGoogleAccoiunt(driver, userName, userPassword) {
+  async function loginAccount(driver, userName, userPassword) {
     try
     {
       if (!userName)
       {
-        userName = "test-sqb1@cienet.com";
-        userPassword = "@Cienet12661266";
+        userName = "accountant";
+        userPassword = "oxcr159357";
       }
-  
-      await action.waitAndInput(userName, action.selectType.ID, 'identifierId', sleepTime, 'input identifierId.', '1801-2');
+      await action.waitAndClick(action.selectType.ID, 'select2-Input_TeamsId-container', sleepTime, 'click Input_TeamsId.', '1801-2');
+      await action.waitAndInput('壞壞大聯盟', action.selectType.CLASSNAME, 'select2-search__field', sleepTime, 'input select 壞壞.', '1801-2');
+      await action.waitAndClick(action.selectType.XPATH, '//li[text()="壞壞大聯盟"]', sleepTime , 'wait for click 聯盟');
+
+      await action.waitAndInput(userName, action.selectType.ID, 'Input_Account', sleepTime, 'input Input_Account.', '1801-2');
       await driver.sleep(1000); // 等待輸入框完全處理輸入
-      await driver.findElement(By.id('identifierId')).sendKeys(Key.RETURN);
   
-      await action.waitAndInput(userPassword, action.selectType.NAME, 'Passwd', sleepTime, '1801-4');
+      await action.waitAndInput(userPassword, action.selectType.ID, 'Input_Password', sleepTime, '1801-4');
       await driver.sleep(1000); // 等待密碼輸入完成
-      await driver.findElement(By.name('Passwd')).sendKeys(Key.RETURN);
-  
+      await action.waitAndClick(action.selectType.XPATH, '//button[text()="登入"]', sleepTime , 'wait for click 聯盟');
+
     } catch (error)
     {
       common.logToFile(`login to google error`)
+      common.logToFile(error)
     }
   }
   
@@ -398,4 +360,4 @@ module.exports = {
   execute: executeMoneypageAgent
 };
 
-//curl -X POST http://localhost:4000 -H 'Content-Type: application/json' -d "{\"type\": \"CA_BQ_AGENT\", \"resultOid\": 0, \"gAccount\": \"joe.chang@cienet.com\", \"gPassword\": \"gem328pam839\", \"lookerAccount\": \"joe.chang@cienet.com\", \"lookerPassword\": \"Gan0204520@\", \"dbId\": \"california_schools\", \"fullPrompt\": \"Day of the week this year with the least conversations\", \"selectData\": \"transcript_with_messages\", \"sql\": \"SELECT \`Free Meal Count (K-12)\` / \`Enrollment (K-12)\` FROM frpm WHERE \`County Name\` = 'Alameda' ORDER BY (CAST(\`Free Meal Count (K-12)\` AS REAL) / \`Enrollment (K-12)\`) DESC LIMIT 1\", \"dbTables\": [\"transcript_with_messages\"]}"
+//curl -X POST http://localhost:3000 -H 'Content-Type: application/json' -d "{\"type\": \"CA_BQ_AGENT\", \"resultOid\": 0, \"userName\": \"accountant\", \"userPassword\": \"oxcr159357\", \"lookerAccount\": \"joe.chang@cienet.com\", \"lookerPassword\": \"Gan0204520@\", \"dbId\": \"california_schools\", \"fullPrompt\": \"Day of the week this year with the least conversations\", \"selectData\": \"transcript_with_messages\", \"sql\": \"SELECT \`Free Meal Count (K-12)\` / \`Enrollment (K-12)\` FROM frpm WHERE \`County Name\` = 'Alameda' ORDER BY (CAST(\`Free Meal Count (K-12)\` AS REAL) / \`Enrollment (K-12)\`) DESC LIMIT 1\", \"dbTables\": [\"transcript_with_messages\"]}"

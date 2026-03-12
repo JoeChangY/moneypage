@@ -1,5 +1,5 @@
 const DEFAULT_ENV = {
-  SLEEP_TIME: 60000
+  SLEEP_TIME: 10000
 }
 
 module.exports = {

@@ -1,5 +1,6 @@
 const http = require('http');
 const moneypageAgent = require('./automations/moneypage.js');
+const common = require('../../utilities/common.js');
 
 
 let busy = false;
@@ -53,8 +54,8 @@ const server = http.createServer(async(req, res) => {
   });
 });
 
-server.listen(4000, () => {
-  common.log('Server running on port 4000');
+server.listen(3000, () => {
+  common.log('Server running on port 3000');
 });
 
 processMethodNotAllowed = (res) => {
