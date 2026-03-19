@@ -31,10 +31,10 @@ async function executeMoneypageAgent(item) {
   return await (async function () {
     const options = new Chrome.Options();
 
-    options.setChromeBinaryPath('/usr/bin/chromium-browser');
-    // options.setChromeBinaryPath("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"); //mac test
+    // options.setChromeBinaryPath('/usr/bin/chromium-browser');
+    options.setChromeBinaryPath("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"); //mac test
 
-    options.addArguments('--headless');  // 無頭模式
+    // options.addArguments('--headless');  // 無頭模式
     options.addArguments('--no-sandbox');  // 防止沙盒模式問題
     options.addArguments('--disable-dev-shm-usage');  // 解決一些 Linux 系統中的共享內存問題
     options.addArguments('--remote-debugging-port=9222');  // 啟動 DevTools 端口，對調試很有用
@@ -91,8 +91,8 @@ async function executeMoneypageAgent(item) {
       
       ////span[contains(@class, "select2-container")]
       for (let per=0;per<players.length;per++){
-        await action.waitAndClick(action.selectType.XPATH, '//div[contains(@class, "form__input")]//select[@id="Input_Player"]', sleepTime, 'click players');
-        await action.waitAndInput(players[per], action.selectType.XPATH, '//input[@class="select2-search__field"]]', sleepTime, 'search players', '1801-2');
+        await action.waitAndClick(action.selectType.XPATH, '//div[contains(@class, "form__input")][.//select[@id="Input_Player"]]', sleepTime, 'click players');
+        await action.waitAndInput(players[per], action.selectType.XPATH, '//input[@class="select2-search__field"]', sleepTime, 'search players', '1801-2');
         await action.waitAndClick(action.selectType.XPATH, `//ul[@id="select2-Input_Player-results"]//li[contains(text(), ${players[per]})]`, sleepTime, 'click players');
       }
 
