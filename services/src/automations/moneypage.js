@@ -111,8 +111,6 @@ async function executeMoneypageAgent(item) {
       common.logToFile(JSON.stringify(response));
       common.log(`Error during interaction: ${error}`);
       common.logToFile(`error status,` + JSON.stringify(response));
-      let snapShotItem = await common.screenshotTimestampRecord(driver, item.questionId);
-      snapshots.push(snapShotItem);
     } finally
     {
       await action.destory();
@@ -201,5 +199,5 @@ module.exports = {
   execute: executeMoneypageAgent
 };
 
-//curl -X POST http://localhost:3000 -H 'Content-Type: application/json' -d "{\"bossName\": \"西瑪\", \"pickerName\": \"accountant\", \"userName\": \"accountant\", \"userPassword\": \"oxcr159357\", \"treasures\": [\"魂體轉換\",\"祝武\"], \"players\": [\"極品鮮奶茶\",\"壞孩子\"]}"
+//curl -X POST http://136.112.26.24:3000 -H 'Content-Type: application/json' -d "{\"bossName\": \"西瑪\", \"pickerName\": \"accountant\", \"userName\": \"accountant\", \"userPassword\": \"oxcr159357\", \"treasures\": [\"魂體轉換\",\"祝武\"], \"players\": [\"極品鮮奶茶\",\"壞孩子\"]}"
 //bossName, pickerName, treasures, players,
